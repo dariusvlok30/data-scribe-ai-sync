@@ -7,9 +7,18 @@ import ChatSidebar from './ChatSidebar';
 
 const MainLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [chatTitle, setChatTitle] = useState<string>('');
+
+  const handleNewMessage = (message: string) => {
+    // Generate chat title from first message if not set
+    if (!chatTitle && message.trim()) {
+      const title = message.length > 30 ? message.substring(0, 30) + '...' : message;
+      setChatTitle(title);
+    }
+  };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden bg-background">
       {/* Overlay for mobile */}
       {sidebarOpen && (
         <div
@@ -19,18 +28,22 @@ const MainLayout: React.FC = () => {
       )}
 
       {/* Sidebar */}
-      <ChatSidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      <ChatSidebar 
+        isOpen={sidebarOpen} 
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
+        currentChatTitle={chatTitle}
+      />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Navigation */}
-        <header className="flex items-center justify-between p-4 border-b border-border glass-effect shrink-0">
+      <div className="flex-1 flex flex-col min-h-0">
+        {/* Top Navigation - Always visible with sidebar button */}
+        <header className="flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur-md z-30 shrink-0">
           <div className="flex items-center gap-4">
             <Button
               size="sm"
               variant="ghost"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg p-2"
             >
               <Menu className="w-5 h-5" />
             </Button>
@@ -59,13 +72,13 @@ const MainLayout: React.FC = () => {
           </div>
         </header>
 
-        {/* Chat Interface - Takes remaining space */}
-        <div className="flex-1 min-h-0">
-          <ChatInterface />
+        {/* Chat Interface - Takes remaining space with proper overflow handling */}
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <ChatInterface onNewMessage={handleNewMessage} />
         </div>
 
         {/* Status Bar */}
-        <footer className="flex items-center justify-between px-4 py-2 border-t border-border glass-effect text-xs text-muted-foreground shrink-0">
+        <footer className="flex items-center justify-between px-4 py-2 border-t border-border bg-background/95 backdrop-blur-md text-xs text-muted-foreground shrink-0">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <Zap className="w-3 h-3 text-yellow-400" />
