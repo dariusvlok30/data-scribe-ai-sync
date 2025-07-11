@@ -1,0 +1,89 @@
+
+import React, { useState } from 'react';
+import { Menu, Brain, Database, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import ChatInterface from './ChatInterface';
+import ChatSidebar from './ChatSidebar';
+
+const MainLayout: React.FC = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  return (
+    <div className="h-screen flex flex-col overflow-hidden">
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <ChatSidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Top Navigation */}
+        <header className="flex items-center justify-between p-4 border-b border-border glass-effect">
+          <div className="flex items-center gap-4">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Menu className="w-5 h-5" />
+            </Button>
+            
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10 floating-animation">
+                <Brain className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold gradient-text">DataScribe AI</h1>
+                <p className="text-sm text-muted-foreground">Intelligent Database Assistant</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-green-500/10 rounded-full">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-xs text-green-400">AI Online</span>
+            </div>
+            
+            <div className="flex items-center gap-2 px-3 py-1 bg-blue-500/10 rounded-full">
+              <Database className="w-4 h-4 text-blue-400" />
+              <span className="text-xs text-blue-400">MySQL Connected</span>
+            </div>
+          </div>
+        </header>
+
+        {/* Chat Interface */}
+        <div className="flex-1 overflow-hidden">
+          <ChatInterface />
+        </div>
+
+        {/* Status Bar */}
+        <footer className="flex items-center justify-between px-4 py-2 border-t border-border glass-effect text-xs text-muted-foreground">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              <Zap className="w-3 h-3 text-yellow-400" />
+              <span>Ollama qwen2.5:7b</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Database className="w-3 h-3 text-blue-400" />
+              <span>pim_product @ 10.51.0.11</span>
+            </div>
+          </div>
+          
+          <div className="hidden sm:block">
+            <span>Ready for data processing • Press Enter to send • Drop files to upload</span>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+};
+
+export default MainLayout;
